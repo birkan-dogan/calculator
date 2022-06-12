@@ -7,6 +7,7 @@ let currOperand = ""; // this will hold the top section
 let previousOperand = ""; // this will hold the show section
 let operation = ""; // to hold operate
 
+let equalOrPercentPressed = false;
 // for capturing method, the main container of buttons is taking
 const btnContainer = document.getElementById("crunch");
 
@@ -24,6 +25,7 @@ btnContainer.addEventListener("click", (e) => {
   if (e.target.classList.contains("equal")) {
     calculate();
     updateDisplay();
+    equalOrPercentPressed = true;
   }
   if (e.target.classList.contains("delete")) {
     previousOperand = "";
@@ -40,11 +42,11 @@ btnContainer.addEventListener("click", (e) => {
     if (!currOperand) return;
     currOperand /= 100;
     updateDisplay();
+    equalOrPercentPressed = true;
   }
 });
 
 const appendNumber = (num) => {
-  //   console.log(num);
   if (num === "0" && currOperand === "0") return; // to avoid serial zeros when currOperand = 0
   if (currOperand === "0" && num !== ".") {
     // if first number 0 and second number will be not "." , first 0 will be deleted
@@ -54,6 +56,13 @@ const appendNumber = (num) => {
   if (num === "." && currOperand.includes(".")) return; // to avoid serial decimals like `...`
 
   if (currOperand.length > 9) return; // to avoid overflow from div
+
+  if (equalOrPercentPressed) {
+    // after clicking enter or percent operator, coming number will be concatenate and this situation is not correct
+    currOperand = num;
+    equalOrPercentPressed = false; // flag method
+    return;
+  }
 
   currOperand += num;
 };
